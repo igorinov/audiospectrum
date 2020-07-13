@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/options_root"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+    <GridLayout
+        android:id="@+id/options_indicator_type"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:columnCount="2">
+
+        <TextView
+            android:labelFor="@+id/color_map"
+            style="@style/Label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/color_map" >
+        </TextView>
+        <Spinner
+            android:id="@+id/color_map"
+            style="@style/MyText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="48pt"
+            android:contentDescription="@string/color_map" >
+        </Spinner>
+
+        <TextView
+            android:labelFor="@+id/window_size"
+            style="@style/Label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/window_size"
+            android:textColor="#FFFFFF" />
+        <TextView
+            android:id="@+id/window_size"
+            style="@style/MyText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="8"
+            android:clickable="true"
+            android:focusable="true" />
+
+        <TextView
+            android:labelFor="@+id/hop_size"
+            style="@style/Label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/hop_size"
+            android:textColor="#FFFFFF" />
+        <TextView
+            android:id="@+id/hop_size"
+            style="@style/MyText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="8"
+            android:clickable="true"
+            android:focusable="true" />
+
+        <TextView
+            android:labelFor="@+id/record_time"
+            style="@style/Label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/record_time"
+            android:textColor="#FFFFFF" />
+        <TextView
+            android:id="@+id/record_time"
+            style="@style/MyText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="8"
+            android:clickable="true"
+            android:focusable="true" />
+
+        <TextView
+            android:labelFor="@+id/sample_rate"
+            style="@style/Label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sample_rate"
+            android:textColor="#FFFFFF" />
+        <Spinner
+            android:id="@+id/sample_rate"
+            style="@style/MyText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="monospace"
+            android:minWidth="48pt" />
+
+        <TextView
+            android:id="@+id/label_keep_screen"
+            style="@style/Label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/keep_screen_on"
+            android:textColor="#FFFFFF" />
+        <CheckBox
+            android:id="@+id/keep_screen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/keep_screen_on"
+            android:buttonTint="@color/colorAccent"/>
+
+        <TextView
+            android:labelFor="@+id/test_mode"
+            style="@style/Label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/test_mode" >
+        </TextView>
+        <CheckBox
+            android:id="@+id/test_mode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:buttonTint="@color/colorAccent" />
+
+        <TextView
+            android:labelFor="@+id/window_type"
+            style="@style/Label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/window_type" >
+        </TextView>
+        <Spinner
+            android:id="@+id/window_type"
+            style="@style/MyText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="48pt" >
+        </Spinner>
+
+        <TextView
+            android:labelFor="@+id/filename"
+            style="@style/Label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/test_filename" >
+        </TextView>
+        <TextView
+            android:id="@+id/filename"
+            style="@style/MyText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/default_filename" >
+        </TextView>
+
+    </GridLayout>
+</ScrollView>

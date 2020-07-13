@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <com.igorinov.audiospectrum.SpectrumView
+        android:id="@+id/spectrum"
+        android:layout_width="match_parent"
+        android:layout_height="0px"
+        android:layout_weight="1"
+        android:textSize="6pt" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center">
+
+        <com.igorinov.audiospectrum.ColorMapView
+            android:id="@+id/colormap"
+            android:layout_width="216pt"
+            android:layout_height="36pt"
+            android:orientation="horizontal"
+            android:textSize="6pt" />
+
+        <ToggleButton
+            android:layout_width="0pt"
+            android:layout_height="32pt"
+            android:layout_weight="1"
+            android:layout_margin="2pt"
+            style="@style/MyButton"
+            android:textAlignment="center"
+            android:textSize="8pt"
+            android:textOff="@string/run"
+            android:textOn="@string/stop"
+            android:id="@+id/run_stop" />
+
+    </LinearLayout>
+
+</LinearLayout>

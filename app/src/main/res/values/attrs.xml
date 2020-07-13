@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="SpectrumView">
+        <attr name="android:padding" />
+        <attr name="android:paddingTop" />
+        <attr name="android:paddingBottom" />
+        <attr name="android:paddingLeft" />
+        <attr name="android:paddingRight" />
+        <attr name="android:textSize" />
+        <attr name="android:verticalGap" />
+        <attr name="android:horizontalGap" />
+        <attr name="android:lineSpacingExtra" />
+        <attr name="android:background" />
+    </declare-styleable>
+    <declare-styleable name="ColorMapView">
+        <attr name="android:textSize" />
+        <attr name="android:background" />
+    </declare-styleable>
+</resources>

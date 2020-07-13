@@ -1,0 +1,55 @@
+<resources>
+    <string name="app_name">Audio Spectrum</string>
+    <string name="app_description">Sound spectrum analyzer</string>
+    <string name="app_copyright">© Ivan Gorinov, 2017</string>
+    <string name="home_page">http://igorinov.com/android/audiospectrum</string>
+    <string name="about">About</string>
+    <string name="set">Set</string>
+    <string name="run">RUN</string>
+    <string name="stop">STOP</string>
+    <string name="zoom_in">Zoom IN</string>
+    <string name="zoom_out">Zoom OUT</string>
+    <string name="settings">Settings</string>
+    <string name="sample_rate">Sample Rate</string>
+    <string name="window_type">Window Type</string>
+    <string name="window_size">Window Size</string>
+    <string name="hop_size">Hop Size</string>
+    <string name="record_time">Record Size (lines)</string>
+    <string name="test_mode">Test mode</string>
+    <string name="test_filename">Test data file name</string>
+    <string name="default_filename">test.data</string>
+    <string name="precision">Precision</string>
+    <string name="color_map">Color Map</string>
+    <string name="keep_screen_on">Keep screen on</string>
+    <string-array name="modes">
+        <item>record</item>
+        <item>playback</item>
+    </string-array>
+    <string-array name="precisions">
+        <item>single</item>
+        <item>double</item>
+    </string-array>
+    <string-array name="window_types">
+        <item>rectangle</item>
+        <item>hann</item>
+        <item>blackman-harris</item>
+        <item>nuttall</item>
+    </string-array>
+    <string-array name="color_maps">
+        <item>grayscale</item>
+        <item>grayprint</item>
+        <item>ocean</item>
+        <item>sunrise</item>
+        <item>rainbow</item>
+        <item>incandescence</item>
+        <item>inkjet</item>
+    </string-array>
+    <string-array name="sample_rates">
+        <item>4000</item>
+        <item>8000</item>
+        <item>12000</item>
+        <item>16000</item>
+        <item>24000</item>
+        <item>48000</item>
+    </string-array>
+</resources>

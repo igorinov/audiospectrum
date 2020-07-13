@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/weather_root"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/label"
+        android:labelFor="@+id/number"
+        style="@style/Label"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="" >
+    </TextView>
+
+    <EditText
+        android:id="@+id/number"
+        style="@style/MyText"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:autofillHints=""
+        android:inputType="number|textNoSuggestions" >
+    </EditText>
+
+    <LinearLayout
+        android:id="@+id/altitude_buttons"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/set"
+            style="@style/MyButton"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:minWidth="48pt"
+            android:text="@string/set" />
+    </LinearLayout>
+
+</LinearLayout>

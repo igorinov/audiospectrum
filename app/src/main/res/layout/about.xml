@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/about_root"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="6pt"
+    android:background="@color/colorPrimary">
+
+    <TextView
+        android:id="@+id/label_about"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/app_description"
+        android:textSize="6pt" >
+    </TextView>
+
+    <TextView
+        android:id="@+id/label_copyright"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/app_copyright"
+        android:textSize="6pt" >
+    </TextView>
+
+    <TextView
+        android:id="@+id/label_page"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:autoLink="all"
+        android:text="@string/home_page"
+        android:textColorLink="@color/colorAccent"
+        android:textSize="6pt" >
+    </TextView>
+
+</LinearLayout>
