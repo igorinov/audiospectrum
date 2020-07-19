@@ -10,10 +10,12 @@ bit_reverse:
         ror         r0, r0, r1
         bx          lr
 
-//  R0 - complex exponent for this stage (w)
-//  R1 - signal data
-//  R2 - signal length, complex points (l)
-//  R3 - number of signal pairs to combine (m)
+#  R0 - complex exponent for this stage (w)
+#  R1 - signal data
+#  R2 - signal length, complex points (l)
+#  R3 - number of signal pairs to combine (m)
+#
+#  Q4 .. Q7 are preserved (not used)
 
 fft_combine_s:
         push        { r5, r6, r7, r8 }
@@ -29,7 +31,7 @@ _next_signal_s:
 # process 4 pairs (a, b) per iteration
 
 _next_pair_s4:
-        vld2.32     { q4, q5 }, [r8]        //  s
+        vld2.32     { q8, q9 }, [r8]        //  s
         vld2.32     { q0, q1 }, [r6]        //  a
         vld2.32     { q2, q3 }, [r7]        //  b
 
@@ -40,16 +42,16 @@ _next_pair_s4:
                     //  q4 = { Re(s0), Re(s1), Re(s2), Re(s3) }
                     //  q5 = { Im(s0), Im(s1), Im(s2), Im(s3) }
 
-        vmul.f32    q6, q2, q4              //  Re(b)·Re(s)
-        vmul.f32    q7, q2, q5              //  Re(b)·Im(s)
-        vmul.f32    q4, q3, q4              //  Im(b)·Re(s)
-        vmul.f32    q5, q3, q5              //  Im(b)·Im(s)
-        vsub.f32    q6, q6, q5              //  Re(b·s)
-        vadd.f32    q7, q4, q7              //  Im(b·s)
-        vsub.f32    q2, q0, q6              //  Re(B) = Re(a) - Re(b·s)
-        vsub.f32    q3, q1, q7              //  Im(B) = Im(a) - Im(b·s)
-        vadd.f32    q0, q0, q6              //  Re(A) = Re(a) + Re(b·s)
-        vadd.f32    q1, q1, q7              //  Im(A) = Im(a) + Im(b·s)
+        vmul.f32    q10, q2, q8             //  Re(b)·Re(s)
+        vmul.f32    q11, q2, q9             //  Re(b)·Im(s)
+        vmul.f32    q8, q3, q8              //  Im(b)·Re(s)
+        vmul.f32    q9, q3, q9              //  Im(b)·Im(s)
+        vsub.f32    q10, q10, q9            //  Re(b·s)
+        vadd.f32    q11, q11, q8            //  Im(b·s)
+        vsub.f32    q2, q0, q10             //  Re(B) = Re(a) - Re(b·s)
+        vsub.f32    q3, q1, q11             //  Im(B) = Im(a) - Im(b·s)
+        vadd.f32    q0, q0, q10             //  Re(A) = Re(a) + Re(b·s)
+        vadd.f32    q1, q1, q11             //  Im(A) = Im(a) + Im(b·s)
 
                     //  q0 = { Re(A0), Re(A1), Re(A2), Re(A3) }
                     //  q1 = { Im(A0), Im(A1), Im(A2), Im(A3) }
@@ -113,6 +115,13 @@ _end_signal_s:
         pop         { r5, r6, r7, r8 }
         bx          lr
 
+#  R0 - complex sinusoid for this round
+#  R1 - signal data
+#  R2 - signal size (L)
+#  R3 - number of signals (M)
+#
+#  D8 .. D15 are preserved (not used)
+
 fft_combine_d:
         push        { r5, r6, r7, r8 }
 
@@ -128,11 +137,11 @@ _next_pair_d:
 
         vmul.f64    d6, d2, d4              //  Re(b)·Re(s)
         vmul.f64    d7, d3, d5              //  Im(b)·Im(s)
-        vmul.f64    d8, d2, d5              //  Re(b)·Im(s)
-        vmul.f64    d9, d3, d4              //  Im(b)·Re(s)
+        vmul.f64    d2, d2, d5              //  Re(b)·Im(s)
+        vmul.f64    d3, d3, d4              //  Im(b)·Re(s)
 
         vsub.f64    d4, d6, d7              //  Re(b·s) = Re(b)·Re(s) - Im(b)·Im(s)
-        vadd.f64    d5, d8, d9              //  Im(b·s) = Re(b)·Im(s) + Im(b)·Re(s)
+        vadd.f64    d5, d2, d3              //  Im(b·s) = Re(b)·Im(s) + Im(b)·Re(s)
 
         vsub.f64    d2, d0, d4              //  Re(B) = Re(a) - Re(b·s)
         vsub.f64    d3, d1, d5              //  Im(B) = Im(a) - Im(b·s)
