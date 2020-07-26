@@ -4,18 +4,10 @@
  *  SPDX-License-Identifier: BSD-2-Clause
  */
 
-.global bit_reverse
 .global fft_combine_s
 .global fft_combine_d
 
 .text
-
-bit_reverse:
-        mov         x2, #64
-        sub         x1, x2, x1
-        rbit        x0, x0
-        ror         x0, x0, x1
-        ret
 
 #  X0 - complex sinusoid for this round
 #  X1 - signal data

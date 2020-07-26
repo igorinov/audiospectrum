@@ -162,12 +162,13 @@ int vispo_dft_complex_s(const complex_s *cs,
  *  @s - complex sinusoid table prepared by dft_setup()
  *  @input - input data
  *  @output - output buffer
- *  @n - number of rows
+ *  @size - number of points
+ *  @out_step - output data interleaving step
  *  @in_step - input data interleaving step
  */
 
 int vispo_dft_complex_step_d(const complex_d *s,
-    complex_d *output, const complex_d *input, int n, int in_step, int s_step)
+    complex_d *output, const complex_d *input, int size, int out_step, int in_step)
 {
     const complex_d *px, *ps;
     double acc[4];
@@ -175,7 +176,7 @@ int vispo_dft_complex_step_d(const complex_d *s,
     double sum[4];
     complex_d x;
     int i, j, k, si;
-    int s_end = n * s_step;
+    int s_end = size;
 
     /* DC component */
 
@@ -184,7 +185,7 @@ int vispo_dft_complex_step_d(const complex_d *s,
     acc[1] = 0;
     inc[0] = Re(*px);
     inc[1] = Im(*px);
-    for (i = 1; i < n; i += 1) {
+    for (i = 1; i < size; i += 1) {
         px += in_step;
         inc[0] += Re(*px);
         inc[1] += Im(*px);
@@ -194,10 +195,11 @@ int vispo_dft_complex_step_d(const complex_d *s,
             acc[j] = sum[j];
         }
     }
-    output[0].re = acc[0];
-    output[0].im = acc[1];
+    output->re = acc[0];
+    output->im = acc[1];
+    output += out_step;
 
-    for (k = 1; k < n; k += 1) {
+    for (k = 1; k < size; k += 1) {
         px = input;
 
         acc[0] = 0;
@@ -210,8 +212,8 @@ int vispo_dft_complex_step_d(const complex_d *s,
         inc[2] = 0;
         inc[3] = 0;
 
-        si = k * s_step;
-        for (i = 1; i < n; i += 1) {
+        si = k;
+        for (i = 1; i < size; i += 1) {
             px += in_step;
             ps = s + si;
             x = *px;
@@ -233,19 +235,20 @@ int vispo_dft_complex_step_d(const complex_d *s,
             /*
              * si = (i * k) % n
              */
-            si += k * s_step;
+            si += k;
             if (si >= s_end)
                 si -= s_end;
         }
-        output[k].re = (acc[0] - acc[3]) + (inc[0] - inc[3]);
-        output[k].im = (acc[1] + acc[2]) + (inc[1] + inc[2]);
+        output->re = (acc[0] - acc[3]) + (inc[0] - inc[3]);
+        output->im = (acc[1] + acc[2]) + (inc[1] + inc[2]);
+        output += out_step;
     }
 
     return k;
 }
 
 int vispo_dft_complex_step_s(const complex_s *s,
-    complex_s *output, const complex_s *input, int n, int in_step, int s_step)
+    complex_s *output, const complex_s *input, int size, int out_step, int in_step)
 {
     const complex_s *px, *ps;
     float acc[4];
@@ -253,7 +256,7 @@ int vispo_dft_complex_step_s(const complex_s *s,
     float sum[4];
     complex_s x;
     int i, j, k, si;
-    int s_end = n * s_step;
+    int s_end = size;
 
     /* DC component */
 
@@ -262,7 +265,7 @@ int vispo_dft_complex_step_s(const complex_s *s,
     acc[1] = 0;
     inc[0] = Re(*px);
     inc[1] = Im(*px);
-    for (i = 1; i < n; i += 1) {
+    for (i = 1; i < size; i += 1) {
         px += in_step;
         inc[0] += Re(*px);
         inc[1] += Im(*px);
@@ -272,10 +275,11 @@ int vispo_dft_complex_step_s(const complex_s *s,
             acc[j] = sum[j];
         }
     }
-    output[0].re = acc[0];
-    output[0].im = acc[1];
+    output->re = acc[0];
+    output->im = acc[1];
+    output += out_step;
 
-    for (k = 1; k < n; k += 1) {
+    for (k = 1; k < size; k += 1) {
         px = input;
 
         acc[0] = 0;
@@ -288,8 +292,8 @@ int vispo_dft_complex_step_s(const complex_s *s,
         inc[2] = 0;
         inc[3] = 0;
 
-        si = k * s_step;
-        for (i = 1; i < n; i += 1) {
+        si = k;
+        for (i = 1; i < size; i += 1) {
             px += in_step;
             ps = s + si;
             x = *px;
@@ -311,12 +315,13 @@ int vispo_dft_complex_step_s(const complex_s *s,
             /*
              * si = (i * k) % n
              */
-            si += k * s_step;
+            si += k;
             if (si >= s_end)
                 si -= s_end;
         }
-        output[k].re = (acc[0] - acc[3]) + (inc[0] - inc[3]);
-        output[k].im = (acc[1] + acc[2]) + (inc[1] + inc[2]);
+        output->re = (acc[0] - acc[3]) + (inc[0] - inc[3]);
+        output->im = (acc[1] + acc[2]) + (inc[1] + inc[2]);
+        output += out_step;
     }
 
     return k;
@@ -333,7 +338,7 @@ int vispo_dft_complex_step_s(const complex_s *s,
  */
 
 int vispo_dft_real_step_d(const complex_d *s,
-    complex_d *output, const double *input, int n, int in_step, int f_step)
+    complex_d *output, const double *input, int n, int out_step, int in_step)
 {
     const complex_d *ps;
     const double *pt;
@@ -341,8 +346,8 @@ int vispo_dft_real_step_d(const complex_d *s,
     double inc[2];
     double sum[2];
     double x;
-    int i, j, k, si, ss;
-    int s_end = n * f_step;
+    int i, j, k, si;
+    int s_end = n;
 
     /* DC component */
 
@@ -356,12 +361,11 @@ int vispo_dft_real_step_d(const complex_d *s,
         inc[0] -= (sum[0] - acc[0]);
         acc[0] = sum[0];
     }
-    output[0].re = acc[0];
-    output[0].im = 0;
+    output->re = acc[0];
+    output->im = 0;
+    output += out_step;
 
-    ss = 0;
     for (k = 1; k < n; k += 1) {
-        ss += f_step;
         pt = input;
         acc[0] = *pt;
         acc[1] = 0;
@@ -371,7 +375,7 @@ int vispo_dft_real_step_d(const complex_d *s,
         for (j = 0; j < 2; j += 1)
             inc[j] = 0;
 
-        si = ss;
+        si = k;
         for (i = 1; i < n; i += 1) {
             pt += in_step;
             ps = s + si;
@@ -394,19 +398,20 @@ int vispo_dft_real_step_d(const complex_d *s,
             /*
              * si = (i * k) % n
              */
-            si += ss;
+            si += k;
             if (si >= s_end)
                 si -= s_end;
         }
-        output[k].re = acc[0];
-        output[k].im = acc[1];
+        output->re = acc[0];
+        output->im = acc[1];
+        output += out_step;
     }
 
     return k;
 }
 
 int vispo_dft_real_step_s(const complex_s *s,
-    complex_s *output, const float *input, int n, int in_step, int f_step)
+    complex_s *output, const float *input, int n, int out_step, int in_step)
 {
     const complex_s *ps;
     const float *pt;
@@ -414,8 +419,8 @@ int vispo_dft_real_step_s(const complex_s *s,
     float inc[2];
     float sum[2];
     float x;
-    int i, j, k, si, ss;
-    int s_end = n * f_step;
+    int i, j, k, si;
+    int s_end = n;
 
     /* DC component */
 
@@ -429,12 +434,11 @@ int vispo_dft_real_step_s(const complex_s *s,
         inc[0] -= (sum[0] - acc[0]);
         acc[0] = sum[0];
     }
-    output[0].re = acc[0];
-    output[0].im = 0;
+    output->re = acc[0];
+    output->im = 0;
+    output += out_step;
 
-    ss = 0;
     for (k = 1; k < n; k += 1) {
-        ss += f_step;
         pt = input;
         acc[0] = *pt;
         acc[1] = 0;
@@ -444,7 +448,7 @@ int vispo_dft_real_step_s(const complex_s *s,
         for (j = 0; j < 2; j += 1)
             inc[j] = 0;
 
-            si = ss;
+            si = k;
         for (i = 1; i < n; i += 1) {
             pt += in_step;
             ps = s + si;
@@ -468,12 +472,13 @@ int vispo_dft_real_step_s(const complex_s *s,
             /*
              * si = (i * k) % n
              */
-            si += ss;
+            si += k;
             if (si >= s_end)
                 si -= s_end;
         }
-        output[k].re = acc[0];
-        output[k].im = acc[1];
+        output->re = acc[0];
+        output->im = acc[1];
+        output += out_step;
     }
 
     return k;

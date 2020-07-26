@@ -19,7 +19,7 @@ int vispo_fft_alloc_d(struct vispo_fft_d *fft, int n)
     if (!fft->tables)
         return -1;
 
-    fft->n = n;
+    fft->size = n;
 
     return 0;
 }
@@ -30,21 +30,21 @@ int vispo_fft_alloc_s(struct vispo_fft_s *fft, int n)
     if (!fft->tables)
         return -1;
 
-    fft->n = n;
+    fft->size = n;
 
     return 0;
 }
 
 int vispo_fft_free_d(struct vispo_fft_d *fft)
 {
-    vispo_free_pages((void *) fft->tables, fft->n * 2 * sizeof(complex_d));
+    vispo_free_pages((void *) fft->tables, fft->size * 2 * sizeof(complex_d));
 
     return 0;
 }
 
 int vispo_fft_free_s(struct vispo_fft_s *fft)
 {
-    vispo_free_pages((void *) fft->tables, fft->n * 2 * sizeof(complex_s));
+    vispo_free_pages((void *) fft->tables, fft->size * 2 * sizeof(complex_s));
 
     return 0;
 }
@@ -93,7 +93,7 @@ static int factorize(int *factors, int max, int n)
 int vispo_fft_setup_d(struct vispo_fft_d *fft, int inverse)
 {
     complex_d *cs = fft->tables;
-    int n = fft->n;
+    int n = fft->size;
 	int i, j;
 
 	if (n == 0)
@@ -115,13 +115,15 @@ int vispo_fft_setup_d(struct vispo_fft_d *fft, int inverse)
 		cs[i].im = 0;
 	}
 
+	cs[0].im = inverse ? 1 : -1;
+
 	return n;
 }
 
 int vispo_fft_setup_s(struct vispo_fft_s *fft, int inverse)
 {
     complex_s *cs = fft->tables;
-    int n = fft->n;
+    int n = fft->size;
 	int i, j;
 
 	if (n == 0)
@@ -142,6 +144,8 @@ int vispo_fft_setup_s(struct vispo_fft_s *fft, int inverse)
 		cs[i].re = 0;
 		cs[i].im = 0;
 	}
+
+	cs[0].im = inverse ? 1 : -1;
 
 	return n;
 }
@@ -172,6 +176,18 @@ int bit_reverse(int i, int bits)
 
 static int fft_combine_loop_s(const complex_s *ww, complex_s *data, int l, int m)
 {
+    if (l == 1 && (m & 3) == 0) {
+		if (ww[5].im < 0) {
+			m >>= 2;
+			fft4_fwd_s(data, m);
+			l <<= 2;
+		} else {
+			m >>= 2;
+			fft4_inv_s(data, m);
+			l <<= 2;
+		}
+    }
+
 	while (!(m & 1)) {
 		m >>= 1;
 		fft_combine_s(ww + l * 2, data, l, m);
@@ -181,8 +197,31 @@ static int fft_combine_loop_s(const complex_s *ww, complex_s *data, int l, int m
 	return m;
 }
 
+static int fft_combine_loop_multichannel_s(const complex_s *ww, complex_s *data, int l, int m, int n)
+{
+    while (!(m & 1)) {
+        m >>= 1;
+        fft_combine_multichannel_s(ww + l * 2, data, l, m, n);
+        l <<= 1;
+    }
+
+    return m;
+}
+
 static int fft_combine_loop_d(const complex_d *ww, complex_d *data, int l, int m)
 {
+	if (l == 1 && (m & 3) == 0) {
+		if (ww[0].im < 0) {
+			m >>= 2;
+			fft4_fwd_d(data, m);
+			l <<= 2;
+		} else {
+			m >>= 2;
+			fft4_inv_d(data, m);
+			l <<= 2;
+		}
+	}
+
 	while (!(m & 1)) {
 		m >>= 1;
 		fft_combine_d(ww + l * 2, data, l, m);
@@ -190,6 +229,17 @@ static int fft_combine_loop_d(const complex_d *ww, complex_d *data, int l, int m
 	}
 
 	return m;
+}
+
+static int fft_combine_loop_multichannel_d(const complex_d *ww, complex_d *data, int l, int m, int n)
+{
+    while (!(m & 1)) {
+        m >>= 1;
+        fft_combine_multichannel_d(ww + l * 2, data, l, m, n);
+        l <<= 1;
+    }
+
+    return m;
 }
 
 /**
@@ -201,8 +251,8 @@ static int __fft_complex_d(const complex_d *ww,
 {
 	int i, j, k;
 	int bits = 0;
-	int m = 1;
 	int l = size;
+	int m = 1;
 
 	/* length = l * m,  m = 2 ^ bits */
 
@@ -218,7 +268,7 @@ static int __fft_complex_d(const complex_d *ww,
 		j = bit_reverse(i, bits);
 
 		if (l > 1) {
-			vispo_dft_complex_step_d(ww + l, out + j * l, in + i, l, m, 1);
+			vispo_dft_complex_step_d(ww + l, out + j * l, in + i, l, 1, m);
 		} else {
 			out[j] = in[i];
 		}
@@ -227,10 +277,51 @@ static int __fft_complex_d(const complex_d *ww,
 	return fft_combine_loop_d(ww, out, l, m);
 }
 
+static int __fft_complex_multichannel_d(struct vispo_fft_d *fft,
+        complex_d *out, const complex_d *in, int size, int channels)
+{
+    int i, j, k;
+    int bits = 0;
+    int l = size;
+    int m = 1;
+    int n = channels;
+    complex_d *ww = fft->tables;
+
+    /* length = l * m,  m = 2 ^ bits */
+
+    while (l > 1) {
+        if (l & 1)
+            break;
+        l >>= 1;
+        m <<= 1;
+        bits += 1;
+    }
+
+    for (i = 0; i < m; i += 1) {
+        j = bit_reverse(i, bits);
+
+        if (l > 1) {
+            for(k = 0; k < n; k += 1)
+                vispo_dft_complex_step_d(ww + l, out + j * l * n + k, in + i * n + k, l, n, m * n);
+        } else {
+            for(k = 0; k < n; k += 1)
+                out[j * n + k] = in[i * n + k];
+        }
+    }
+
+    return fft_combine_loop_multichannel_d(ww, out, l, m, n);
+}
+
 int vispo_fft_complex_d(struct vispo_fft_d *fft,
     complex_d *out, const complex_d *in)
 {
-    return __fft_complex_d(fft->tables, out, in, fft->n);
+    return __fft_complex_d(fft->tables, out, in, fft->size);
+}
+
+int vispo_fft_complex_multichannel_d(struct vispo_fft_d *fft,
+                        complex_d *out, const complex_d *in, int channels)
+{
+    return __fft_complex_multichannel_d(fft, out, in, fft->size, channels);
 }
 
 static int __fft_complex_s(struct vispo_fft_s *fft,
@@ -256,7 +347,7 @@ static int __fft_complex_s(struct vispo_fft_s *fft,
 		j = bit_reverse(i, bits);
 
         if (l > 1) {
-            vispo_dft_complex_step_s(ww + l, out + j * l, in + i, l, m, 1);
+            vispo_dft_complex_step_s(ww + l, out + j * l, in + i, l, 1, m);
 		} else {
 			out[j] = in[i];
 		}
@@ -265,10 +356,51 @@ static int __fft_complex_s(struct vispo_fft_s *fft,
 	return fft_combine_loop_s(ww, out, l, m);
 }
 
+static int __fft_complex_multichannel_s(struct vispo_fft_s *fft,
+                           complex_s *out, const complex_s *in, int size, int channels)
+{
+    int i, j, k;
+    int bits = 0;
+    int l = size;
+    int m = 1;
+    int n = channels;
+    complex_s *ww = fft->tables;
+
+    /* length = l * m,  m = 2 ^ bits */
+
+    while (l > 1) {
+        if (l & 1)
+            break;
+        l >>= 1;
+        m <<= 1;
+        bits += 1;
+    }
+
+    for (i = 0; i < m; i += 1) {
+        j = bit_reverse(i, bits);
+
+        if (l > 1) {
+            for(k = 0; k < n; k += 1)
+                vispo_dft_complex_step_s(ww + l, out + j * l * n + k, in + i * n + k, l, n, m * n);
+        } else {
+            for(k = 0; k < n; k += 1)
+                out[j * n + k] = in[i * n + k];
+        }
+    }
+
+    return fft_combine_loop_multichannel_s(ww, out, l, m, n);
+}
+
 int vispo_fft_complex_s(struct vispo_fft_s *fft,
    complex_s *out, const complex_s *in)
 {
-    return __fft_complex_s(fft, out, in, fft->n);
+    return __fft_complex_s(fft, out, in, fft->size);
+}
+
+int vispo_fft_complex_multichannel_s(struct vispo_fft_s *fft,
+						complex_s *out, const complex_s *in, int n)
+{
+	return __fft_complex_multichannel_s(fft, out, in, fft->size, n);
 }
 
 /**
@@ -296,7 +428,7 @@ int fft_real_odd_d(const complex_d *cs, complex_d *out, const double *in, int si
 		j = bit_reverse(i, bits);
 
 		if (n > 1) {
-			vispo_dft_real_step_d(cs + n, out + j * n, in + i, n, m, 1);
+			vispo_dft_real_step_d(cs + n, out + j * n, in + i, n, 1, m);
 		} else {
 			out[j].re = in[i];
 			out[j].im = 0;
@@ -328,7 +460,7 @@ int fft_real_odd_s(const complex_s *cs, complex_s *out, const float *in, int siz
 		j = bit_reverse(i, bits);
 
 		if (n > 1) {
-			vispo_dft_real_step_s(cs + n, out + j * n, in + i, n, m, 1);
+			vispo_dft_real_step_s(cs + n, out + j * n, in + i, n, 1, m);
 		} else {
 			out[j].re = in[i];
 			out[j].im = 0;
@@ -351,7 +483,7 @@ int vispo_fft_real_d(struct vispo_fft_d *fft,
     complex_d *out, const double *input)
 {
     const complex_d *cs = fft->tables;
-    int n = fft->n;
+    int n = fft->size;
 	complex_d a, b;
 	int c, quarter;
 	int i, j;
@@ -406,7 +538,7 @@ int vispo_fft_real_s(struct vispo_fft_s *fft,
     complex_s *out, const float *input)
 {
     const complex_s *cs = fft->tables;
-    int n = fft->n;
+    int n = fft->size;
 	complex_s a, b;
 	int c, quarter;
 	int i, j;
@@ -456,4 +588,3 @@ int vispo_fft_real_s(struct vispo_fft_s *fft,
 
 	return fft_combine_loop_s(cs, out, c, 2);
 }
-

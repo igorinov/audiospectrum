@@ -1,14 +1,7 @@
-.global bit_reverse
 .global fft_combine_s
 .global fft_combine_d
 
 .text
-
-bit_reverse:
-        rsb         r1, r1, #32
-        rbit        r0, r0
-        ror         r0, r0, r1
-        bx          lr
 
 #  R0 - complex exponent for this stage (w)
 #  R1 - signal data
@@ -169,5 +162,5 @@ _next_pair_d:
         pop         { r5, r6, r7, r8 }
         bx          lr
 
-        .size       fft_join_s, . - fft_join_s
+#        .size       fft_join_s, . - fft_join_s
 

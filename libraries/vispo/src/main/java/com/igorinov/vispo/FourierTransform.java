@@ -8,10 +8,12 @@ public class FourierTransform {
     public static native int fftSetupS(float[] ce, int size, boolean inverse);
     public static native int fftS(float[] ce, float[] out, float[] signal, int size);
     public static native int fftRealS(float[] ce, float[] out, float[] signal, int size);
+    public static native int fftMultichannelS(float[] ce, float[] out, float[] signal, int size, int channels);
 
     public static native int fftSetupD(double[] ce, int size, boolean inverse);
     public static native int fftD(double[] ce, double[] out, double[] signal, int size);
     public static native int fftRealD(double[] ce, double[] out, double[] signal, int size);
+    public static native int fftMultichannelD(double[] ce, double[] out, double[] signal, int size, int channels);
 
     public static class Single {
         float[] ce;
@@ -29,6 +31,10 @@ public class FourierTransform {
 
         public int fftReal(float[] out, float[] in) {
             return fftRealS(ce, out, in, size);
+        }
+
+        public int fftMultichannel(float[] out, float[] in, int channels) {
+            return fftMultichannelS(ce, out, in, size, channels);
         }
     }
 
@@ -48,6 +54,10 @@ public class FourierTransform {
 
         public int fftReal(double[] out, double[] in) {
             return fftRealD(ce, out, in, size);
+        }
+
+        public int fftMultichannel(double[] out, double[] in, int channels) {
+            return fftMultichannelD(ce, out, in, size, channels);
         }
     }
 
