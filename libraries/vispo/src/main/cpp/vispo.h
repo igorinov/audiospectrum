@@ -57,8 +57,8 @@ int vispo_dft_setup_d(complex_d *w, int n, int inverse);
 int vispo_fft_setup_s(struct vispo_fft_s *fft, int inverse);
 int vispo_fft_setup_d(struct vispo_fft_d *fft, int inverse);
 
-int vispo_fft_complex_s(struct vispo_fft_s *fft, complex_s *out, const complex_s *in);
-int vispo_fft_complex_d(struct vispo_fft_d *fft, complex_d *out, const complex_d *in);
+int vispo_fft_complex_s(struct vispo_fft_s *fft, complex_s *out, const complex_s *in, int signals);
+int vispo_fft_complex_d(struct vispo_fft_d *fft, complex_d *out, const complex_d *in, int signals);
 
 int vispo_fft_complex_multichannel_s(struct vispo_fft_s *fft, complex_s *out, const complex_s *in, int channels);
 int vispo_fft_complex_multichannel_d(struct vispo_fft_d *fft, complex_d *out, const complex_d *in, int channels);
@@ -85,6 +85,12 @@ int fft4_fwd_s(complex_s *data, int m);
 int fft4_inv_s(complex_s *data, int m);
 int fft4_fwd_d(complex_d *data, int m);
 int fft4_inv_d(complex_d *data, int m);
+
+int fft8_fwd_s(const complex_s *s, complex_s *data, int m);
+int fft8_inv_s(const complex_s *s, complex_s *data, int m);
+
+int fft8_fwd_d(const complex_d *s, complex_d *data, int m);
+int fft8_inv_d(const complex_d *s, complex_d *data, int m);
 
 #ifdef __cplusplus
 }

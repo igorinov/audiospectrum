@@ -6,12 +6,12 @@ package com.igorinov.vispo;
 public class FourierTransform {
 
     public static native int fftSetupS(float[] ce, int size, boolean inverse);
-    public static native int fftS(float[] ce, float[] out, float[] signal, int size);
+    public static native int fftS(float[] ce, float[] out, float[] signal, int size, int signals);
     public static native int fftRealS(float[] ce, float[] out, float[] signal, int size);
     public static native int fftMultichannelS(float[] ce, float[] out, float[] signal, int size, int channels);
 
     public static native int fftSetupD(double[] ce, int size, boolean inverse);
-    public static native int fftD(double[] ce, double[] out, double[] signal, int size);
+    public static native int fftD(double[] ce, double[] out, double[] signal, int size, int signals);
     public static native int fftRealD(double[] ce, double[] out, double[] signal, int size);
     public static native int fftMultichannelD(double[] ce, double[] out, double[] signal, int size, int channels);
 
@@ -25,8 +25,12 @@ public class FourierTransform {
             fftSetupS(ce, size, inverse);
         }
 
+        public int fft(float[] out, float[] in, int signals) {
+            return fftS(ce, out, in, size, signals);
+        }
+
         public int fft(float[] out, float[] in) {
-            return fftS(ce, out, in, size);
+            return fftS(ce, out, in, size, 1);
         }
 
         public int fftReal(float[] out, float[] in) {
@@ -48,8 +52,12 @@ public class FourierTransform {
             fftSetupD(ce, size, inverse);
         }
 
+        public int fft(double[] out, double[] in, int signals) {
+            return fftD(ce, out, in, size, signals);
+        }
+
         public int fft(double[] out, double[] in) {
-            return fftD(ce, out, in, size);
+            return fftD(ce, out, in, size, 1);
         }
 
         public int fftReal(double[] out, double[] in) {

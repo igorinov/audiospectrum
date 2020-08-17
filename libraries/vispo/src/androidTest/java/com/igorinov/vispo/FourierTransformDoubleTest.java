@@ -69,6 +69,103 @@ public class FourierTransformDoubleTest {
         assertArrayEquals(b_exp, b, delta);
     }
 
+
+    @Test
+    public void fftReal4() {
+        FourierTransform.Double ft = new FourierTransform.Double(4, false);
+        double[] a = new double[4];
+        double[] b = new double[8];
+        double[] b_exp = new double[8];
+        int i;
+
+        for (i = 0; i < 8; i += 1)
+            b_exp[i] = 0;
+        b_exp[4] = 4;
+
+        a[0] = 1;
+        a[1] = -1;
+        a[2] = 1;
+        a[3] = -1;
+
+        ft.fftReal(b, a);
+        assertArrayEquals(b_exp, b, delta);
+
+        for (i = 0; i < 8; i += 1)
+            b_exp[i] = 0;
+        b_exp[2] = 2;
+        b_exp[6] = 2;
+
+        a[0] = 1;
+        a[1] = 0;
+        a[2] = -1;
+        a[3] = 0;
+        ft.fftReal(b, a);
+        assertArrayEquals(b_exp, b, delta);
+    }
+
+    @Test
+    public void fftReal8() {
+        int n = 8;
+        FourierTransform.Double ft = new FourierTransform.Double(n, false);
+        double[] a = new double[n];
+        double[] b = new double[n * 2];
+        double[] b_exp = new double[n * 2];
+        int i;
+
+        for (i = 0; i < n * 2; i += 1)
+            b_exp[i] = 0;
+
+        b_exp[8] = 8;
+
+        a[0] = +1;
+        a[1] = -1;
+        a[2] = +1;
+        a[3] = -1;
+        a[4] = +1;
+        a[5] = -1;
+        a[6] = +1;
+        a[7] = -1;
+
+        ft.fftReal(b, a);
+        assertArrayEquals(b_exp, b, delta);
+
+        for (i = 0; i < n * 2; i += 1)
+            b_exp[i] = 0;
+
+        b_exp[4] = 4;
+        b_exp[12] = 4;
+
+        a[0] = +1;
+        a[1] = 0;
+        a[2] = -1;
+        a[3] = 0;
+        a[4] = +1;
+        a[5] = 0;
+        a[6] = -1;
+        a[7] = 0;
+        ft.fftReal(b, a);
+        assertArrayEquals(b_exp, b, delta);
+
+        for (i = 0; i < n * 2; i += 1)
+            b_exp[i] = 0;
+
+        b_exp[2] = 4;
+        b_exp[14] = 4;
+
+        float hsqrt2 = (float) Math.sqrt(2) / 2;
+
+        a[0] = +1;
+        a[1] = +hsqrt2;
+        a[2] = 0;
+        a[3] = -hsqrt2;
+        a[4] = -1;
+        a[5] = -hsqrt2;
+        a[6] = 0;
+        a[7] = +hsqrt2;
+        ft.fftReal(b, a);
+        assertArrayEquals(b_exp, b, delta);
+    }
+
     private void ForwardInverse(int n) {
         Random random = new Random();
         double[] data0 = new double[n * 2];

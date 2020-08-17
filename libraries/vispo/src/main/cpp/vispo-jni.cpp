@@ -42,7 +42,7 @@ extern "C" JNIEXPORT jint JNICALL FN_NAME(fftSetupD)(JNIEnv *env, jclass jc,
 }
 
 extern "C" JNIEXPORT jint JNICALL FN_NAME(fftS)(JNIEnv *env, jclass jc,
-    jfloatArray jce, jfloatArray jout, jfloatArray jin, jint size)
+    jfloatArray jce, jfloatArray jout, jfloatArray jin, jint size, int signals)
 {
     vispo_fft_s fft;
     float *ce  = env->GetFloatArrayElements(jce, 0);
@@ -51,7 +51,7 @@ extern "C" JNIEXPORT jint JNICALL FN_NAME(fftS)(JNIEnv *env, jclass jc,
 
     fft.tables = (complex_s *) ce;
     fft.size = size;
-    vispo_fft_complex_s(&fft, (complex_s *) out, (complex_s *) in);
+    vispo_fft_complex_s(&fft, (complex_s *) out, (complex_s *) in, signals);
 
     env->ReleaseFloatArrayElements(jce, ce, JNI_ABORT);  /* read only; not copied back */
     env->ReleaseFloatArrayElements(jin, in, JNI_ABORT);  /* read only; not copied back */
@@ -61,7 +61,7 @@ extern "C" JNIEXPORT jint JNICALL FN_NAME(fftS)(JNIEnv *env, jclass jc,
 }
 
 extern "C" JNIEXPORT jint JNICALL FN_NAME(fftD)(JNIEnv *env, jclass jc,
-    jdoubleArray jce, jdoubleArray jout, jdoubleArray jin, jint size)
+    jdoubleArray jce, jdoubleArray jout, jdoubleArray jin, jint size, jint signals)
 {
     vispo_fft_d fft;
     double *ce  = env->GetDoubleArrayElements(jce, 0);
@@ -70,7 +70,7 @@ extern "C" JNIEXPORT jint JNICALL FN_NAME(fftD)(JNIEnv *env, jclass jc,
 
     fft.tables = (complex_d *) ce;
     fft.size = size;
-    vispo_fft_complex_d(&fft, (complex_d *) out, (complex_d *) in);
+    vispo_fft_complex_d(&fft, (complex_d *) out, (complex_d *) in, signals);
 
     env->ReleaseDoubleArrayElements(jce, ce, JNI_ABORT);  /* read only; not copied back */
     env->ReleaseDoubleArrayElements(jin, in, JNI_ABORT);  /* read only; not copied back */

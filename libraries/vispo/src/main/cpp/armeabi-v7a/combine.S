@@ -161,6 +161,3 @@ _next_pair_d:
 
         pop         { r5, r6, r7, r8 }
         bx          lr
-
-#        .size       fft_join_s, . - fft_join_s
-

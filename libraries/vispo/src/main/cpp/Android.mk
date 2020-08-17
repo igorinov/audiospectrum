@@ -1,7 +1,7 @@
 LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 LOCAL_MODULE := vispo
-LOCAL_SRC_FILES := vispo-jni.cpp dft.c fft.c combine.c
+LOCAL_SRC_FILES := vispo-jni.cpp dft.c fft.c combine.c fft8.c
 LOCAL_CPP_EXTENSION := .cxx .cpp .cc
 
 LOCAL_CFLAGS += -lm
@@ -11,8 +11,12 @@ ifeq ($(TARGET_ARCH_ABI),armeabi-v7a)
 LOCAL_ARM_NEON := true
 LOCAL_CFLAGS += -O3 -mfpu=neon
 LOCAL_CFLAGS += -DASSEMBLY_FFT
+LOCAL_CFLAGS += -DASSEMBLY_FFT_MULTICHANNEL
 LOCAL_CFLAGS += -DASSEMBLY_BITREV
+LOCAL_CFLAGS += -DVISPO_ASSEMBLY_FFT8
+LOCAL_SRC_FILES += armeabi-v7a/fft8.S
 LOCAL_SRC_FILES += armeabi-v7a/combine.S
+LOCAL_SRC_FILES += armeabi-v7a/combine_multichannel.S
 LOCAL_SRC_FILES += armeabi-v7a/bitreverse.S
 endif
 
