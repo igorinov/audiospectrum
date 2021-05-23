@@ -22,6 +22,11 @@ int fft8_fwd_s(const complex_s *s, complex_s *data, int m)
         g = data[6];
         h = data[7];
 
+        /*
+         * Step 1. Combine 4 pairs of 1-point signals
+         * This part is the same for forward and inverse transform
+         */
+
         t = b;
         b.re = a.re - t.re;
         b.im = a.im - t.im;
@@ -43,6 +48,11 @@ int fft8_fwd_s(const complex_s *s, complex_s *data, int m)
         g.re += t.re;
         g.im += t.im;
 
+        /*
+         * Step 2. Combine 2 pairs of 2-point signals
+         * This part is different for forward and inverse transform
+         */
+
         t = c;
         c.re = a.re - t.re;
         c.im = a.im - t.im;
@@ -63,6 +73,11 @@ int fft8_fwd_s(const complex_s *s, complex_s *data, int m)
         h.im = f.im + t.re;
         f.re += t.im;
         f.im -= t.re;
+
+        /*
+         * Step 3. Combine 1 pair of 4-point signals
+         * This part is the same for forward and inverse transform
+         */
 
         t.re = e.re * s[0].re - e.im * s[0].im;
         t.im = e.re * s[0].im + e.im * s[0].re;
@@ -120,6 +135,11 @@ int fft8_inv_s(const complex_s *s, complex_s *data, int m)
         g = data[6];
         h = data[7];
 
+        /*
+         * Step 1. Combine 4 pairs of 1-point signals
+         * This part is the same for forward and inverse transform
+         */
+
         t = b;
         b.re = a.re - t.re;
         b.im = a.im - t.im;
@@ -141,6 +161,11 @@ int fft8_inv_s(const complex_s *s, complex_s *data, int m)
         g.re += t.re;
         g.im += t.im;
 
+        /*
+         * Step 2. Combine 2 pairs of 2-point signals
+         * This part is different for forward and inverse transform
+         */
+
         t = c;
         c.re = a.re - t.re;
         c.im = a.im - t.im;
@@ -161,6 +186,11 @@ int fft8_inv_s(const complex_s *s, complex_s *data, int m)
         h.im = f.im - t.re;
         f.re -= t.im;
         f.im += t.re;
+
+        /*
+         * Step 3. Combine 1 pair of 4-point signals
+         * This part is the same for forward and inverse transform
+         */
 
         t.re = e.re * s[0].re - e.im * s[0].im;
         t.im = e.re * s[0].im + e.im * s[0].re;
@@ -218,6 +248,11 @@ int fft8_fwd_d(const complex_d *s, complex_d *data, int m)
         g = data[6];
         h = data[7];
 
+        /*
+         * Step 1. Combine 4 pairs of 1-point signals
+         * This part is the same for forward and inverse transform
+         */
+
         t = b;
         b.re = a.re - t.re;
         b.im = a.im - t.im;
@@ -239,6 +274,11 @@ int fft8_fwd_d(const complex_d *s, complex_d *data, int m)
         g.re += t.re;
         g.im += t.im;
 
+        /*
+         * Step 2. Combine 2 pairs of 2-point signals
+         * This part is different for forward and inverse transform
+         */
+
         t = c;
         c.re = a.re - t.re;
         c.im = a.im - t.im;
@@ -259,6 +299,11 @@ int fft8_fwd_d(const complex_d *s, complex_d *data, int m)
         h.im = f.im + t.re;
         f.re += t.im;
         f.im -= t.re;
+
+        /*
+         * Step 3. Combine 1 pair of 4-point signals
+         * This part is the same for forward and inverse transform
+         */
 
         t.re = e.re * s[0].re - e.im * s[0].im;
         t.im = e.re * s[0].im + e.im * s[0].re;
@@ -316,6 +361,11 @@ int fft8_inv_d(const complex_d *s, complex_d *data, int m)
         g = data[6];
         h = data[7];
 
+        /*
+         * Step 1. Combine 4 pairs of 1-point signals
+         * This part is the same for forward and inverse transform
+         */
+
         t = b;
         b.re = a.re - t.re;
         b.im = a.im - t.im;
@@ -337,6 +387,11 @@ int fft8_inv_d(const complex_d *s, complex_d *data, int m)
         g.re += t.re;
         g.im += t.im;
 
+        /*
+         * Step 2. Combine 2 pairs of 2-point signals
+         * This part is different for forward and inverse transform
+         */
+
         t = c;
         c.re = a.re - t.re;
         c.im = a.im - t.im;
@@ -357,6 +412,11 @@ int fft8_inv_d(const complex_d *s, complex_d *data, int m)
         h.im = f.im - t.re;
         f.re -= t.im;
         f.im += t.re;
+
+        /*
+         * Step 3. Combine 1 pair of 4-point signals
+         * This part is the same for forward and inverse transform
+         */
 
         t.re = e.re * s[0].re - e.im * s[0].im;
         t.im = e.re * s[0].im + e.im * s[0].re;

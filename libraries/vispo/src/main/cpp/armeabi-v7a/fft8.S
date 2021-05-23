@@ -144,8 +144,8 @@ _next_octet_inv_s:
         vmov        d22, d3
         vsub.f32    d1, d0, d20         //  Re(B₀) = Re(a₀) - Re(b₀); Re(B₂) = Re(a₂) - Re(b₂)
         vsub.f32    d3, d2, d22         //  Im(B₀) = Im(a₀) - Im(b₀); Im(B₂) = Im(a₂) - Im(b₂)
-        vadd.f32    d0, d0, d20         //  Re(A₀) = Re(a₀) + Re(b₂); Re(A₂) = Re(a₂) + Re(b₂)
-        vadd.f32    d2, d2, d22         //  Im(A₀) = Im(a₀) + Im(b₂); Im(A₂) = Im(a₂) + Im(b₂)
+        vadd.f32    d0, d0, d20         //  Re(A₀) = Re(a₀) + Re(b₀); Re(A₂) = Re(a₂) + Re(b₂)
+        vadd.f32    d2, d2, d22         //  Im(A₀) = Im(a₀) + Im(b₀); Im(A₂) = Im(a₂) + Im(b₂)
 
 
         vmov        d21, d5

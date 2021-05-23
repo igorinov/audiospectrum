@@ -70,6 +70,48 @@ public class FourierTransformSingleTest {
     }
 
     @Test
+    public void fftComplex8() {
+        FourierTransform.Single ft = new FourierTransform.Single(8, false);
+        float[] a = new float[16];
+        float[] b = new float[16];
+        float[] b_exp = new float[16];
+        float hsqrt2 = (float) Math.sqrt(2) / 2f;
+        int i;
+
+        for (i = 0; i < 16; i += 1)
+            b_exp[i] = 0;
+
+        b_exp[2] = 8;
+
+        a[0] = +1;
+        a[1] = 0;
+
+        a[2] = +hsqrt2;
+        a[3] = +hsqrt2;
+
+        a[4] = 0;
+        a[5] = +1;
+
+        a[6] = -hsqrt2;
+        a[7] = +hsqrt2;
+
+        a[8] = -1;
+        a[9] = 0;
+
+        a[10] = -hsqrt2;
+        a[11] = -hsqrt2;
+
+        a[12] = 0;
+        a[13] = -1;
+
+        a[14] = +hsqrt2;
+        a[15] = -hsqrt2;
+
+        ft.fft(b, a);
+        assertArrayEquals(b_exp, b, delta);
+    }
+
+    @Test
     public void fftReal4() {
         FourierTransform.Single ft = new FourierTransform.Single(4, false);
         float[] a = new float[4];
